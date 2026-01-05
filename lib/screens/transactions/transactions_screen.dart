@@ -6,7 +6,8 @@ import '../../models/category.dart';
 import '../../models/transaction.dart' as models;
 import '../../providers/auth_provider.dart';
 import '../../providers/transaction_provider.dart';
-import '../../utils/formatters.dart';
+import '../../widgets/common/custom_filter_chip.dart';
+import '../../widgets/transactions/transaction_card.dart';
 import 'transaction_form_screen.dart';
 
 class TransactionsScreen extends StatefulWidget {
@@ -179,7 +180,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                         itemCount: transactions.length,
                         itemBuilder: (context, index) {
                           final transaction = transactions[index];
-                          return _TransactionCard(
+                          return TransactionCard(
                             transaction: transaction,
                             onDelete: () => _confirmDelete(
                               context,
@@ -222,7 +223,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
         children: [
-          _FilterChip(
+          CustomFilterChip(
             label: _selectedType == null
                 ? 'Tipo'
                 : _selectedType == 'income'
@@ -234,7 +235,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
 
           const SizedBox(width: 8),
 
-          _FilterChip(
+          CustomFilterChip(
             label: _selectedCategory ?? 'Categoria',
             isActive: _selectedCategory != null,
             onTap: () => _showCategoryFilter(),
@@ -242,7 +243,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
 
           const SizedBox(width: 8),
 
-          _FilterChip(
+          CustomFilterChip(
             label: _formatDateRange(),
             isActive: _startDate != null,
             onTap: _selectDateRange,
@@ -377,119 +378,5 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
         ),
       );
     }
-  }
-}
-
-class _FilterChip extends StatelessWidget {
-  final String label;
-  final bool isActive;
-  final VoidCallback onTap;
-
-  const _FilterChip({
-    required this.label,
-    required this.isActive,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(20),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
-          color: isActive
-              ? AppTheme.primaryGreen.withValues(alpha: 0.15)
-              : Colors.white,
-          border: Border.all(
-            color: isActive ? AppTheme.primaryGreen : Colors.grey.shade400,
-          ),
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              label,
-              style: TextStyle(
-                color: isActive ? AppTheme.primaryGreen : Colors.grey.shade700,
-                fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
-              ),
-            ),
-            const SizedBox(width: 4),
-            Icon(
-              Icons.arrow_drop_down,
-              size: 18,
-              color: isActive ? AppTheme.primaryGreen : Colors.grey.shade600,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _TransactionCard extends StatelessWidget {
-  final models.Transaction transaction;
-  final VoidCallback onDelete;
-  final VoidCallback onEdit;
-
-  const _TransactionCard({
-    required this.transaction,
-    required this.onDelete,
-    required this.onEdit,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final isIncome = transaction.isIncome;
-    final color = isIncome ? Colors.green : Colors.red;
-    final icon = isIncome ? Icons.arrow_upward : Icons.arrow_downward;
-    final sign = isIncome ? '+' : '-';
-
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: InkWell(
-        onTap: onEdit,
-        borderRadius: BorderRadius.circular(12),
-        child: ListTile(
-          leading: CircleAvatar(
-            backgroundColor: color.withValues(alpha: 0.1),
-            child: Icon(icon, color: color),
-          ),
-
-          title: Text(
-            transaction.description,
-            style: const TextStyle(fontWeight: FontWeight.w500),
-          ),
-
-          subtitle: Text(
-            '${transaction.category} • ${Formatters.date(transaction.date)}',
-            style: TextStyle(color: Colors.grey[600], fontSize: 13),
-          ),
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                '$sign ${Formatters.currency(transaction.amount)}',
-                style: TextStyle(
-                  color: color,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
-
-              const SizedBox(width: 8),
-
-              IconButton(
-                icon: const Icon(Icons.delete_outline, color: Colors.grey),
-                onPressed: onDelete,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 }

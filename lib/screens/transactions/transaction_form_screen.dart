@@ -9,6 +9,7 @@ import '../../providers/auth_provider.dart';
 import '../../providers/transaction_provider.dart';
 import '../../widgets/common/custom_button.dart';
 import '../../widgets/common/custom_text_field.dart';
+import '../../widgets/common/type_button.dart';
 
 class TransactionFormScreen extends StatefulWidget {
   final models.Transaction? transaction;
@@ -205,7 +206,7 @@ class _TransactionFormScreenState extends State<TransactionFormScreen> {
                 Row(
                   children: [
                     Expanded(
-                      child: _TypeButton(
+                      child: TypeButton(
                         label: 'Receita',
                         icon: Icons.arrow_upward,
                         color: Colors.green,
@@ -222,7 +223,7 @@ class _TransactionFormScreenState extends State<TransactionFormScreen> {
                     const SizedBox(width: 12),
 
                     Expanded(
-                      child: _TypeButton(
+                      child: TypeButton(
                         label: 'Despesa',
                         icon: Icons.arrow_downward,
                         color: Colors.red,
@@ -344,55 +345,6 @@ class _TransactionFormScreenState extends State<TransactionFormScreen> {
               ],
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _TypeButton extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  final Color color;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _TypeButton({
-    required this.label,
-    required this.icon,
-    required this.color,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        decoration: BoxDecoration(
-          color: isSelected ? color.withValues(alpha: 0.1) : Colors.transparent,
-          border: Border.all(
-            color: isSelected ? color : Colors.grey.shade300,
-            width: isSelected ? 2 : 1,
-          ),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: isSelected ? color : Colors.grey),
-            const SizedBox(width: 8),
-            Text(
-              label,
-              style: TextStyle(
-                color: isSelected ? color : Colors.grey,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              ),
-            ),
-          ],
         ),
       ),
     );
