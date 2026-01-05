@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'config/app_theme.dart';
 import 'providers/auth_provider.dart';
+import 'providers/transaction_provider.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/home/dashboard_screen.dart';
 
@@ -12,7 +13,10 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => AuthProvider())],
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => TransactionProvider()),
+      ],
       child: MaterialApp(
         title: 'Finance App',
         debugShowCheckedModeBanner: false,
