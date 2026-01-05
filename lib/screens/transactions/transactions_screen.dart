@@ -6,6 +6,7 @@ import '../../models/category.dart';
 import '../../models/transaction.dart' as models;
 import '../../providers/auth_provider.dart';
 import '../../providers/transaction_provider.dart';
+import '../../utils/formatters.dart';
 import 'transaction_form_screen.dart';
 
 class TransactionsScreen extends StatefulWidget {
@@ -464,17 +465,14 @@ class _TransactionCard extends StatelessWidget {
           ),
 
           subtitle: Text(
-            '${transaction.category} • '
-            '${transaction.date.day.toString().padLeft(2, '0')}/'
-            '${transaction.date.month.toString().padLeft(2, '0')}/'
-            '${transaction.date.year}',
+            '${transaction.category} • ${Formatters.date(transaction.date)}',
             style: TextStyle(color: Colors.grey[600], fontSize: 13),
           ),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                '$sign R\$ ${transaction.amount.toStringAsFixed(2)}',
+                '$sign ${Formatters.currency(transaction.amount)}',
                 style: TextStyle(
                   color: color,
                   fontWeight: FontWeight.bold,
