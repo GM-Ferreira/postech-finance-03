@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../config/app_theme.dart';
+import '../../models/category.dart';
 import '../../models/transaction.dart' as models;
+import '../../models/transaction_type.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/transaction_provider.dart';
 import '../../widgets/common/custom_button.dart';
@@ -24,32 +26,13 @@ class _TransactionFormScreenState extends State<TransactionFormScreen> {
   final _descriptionController = TextEditingController();
   final _amountController = TextEditingController();
 
-  String _transactionType = 'expense';
+  TransactionType _transactionType = TransactionType.expense;
   String _selectedCategory = 'Outros';
   DateTime _selectedDate = DateTime.now();
   bool _isLoading = false;
 
-  final List<String> _incomeCategories = [
-    'Salário',
-    'Freelance',
-    'Investimentos',
-    'Presente',
-    'Outros',
-  ];
-
-  final List<String> _expenseCategories = [
-    'Alimentação',
-    'Transporte',
-    'Moradia',
-    'Saúde',
-    'Educação',
-    'Lazer',
-    'Roupas',
-    'Outros',
-  ];
-
   List<String> get _categories =>
-      _transactionType == 'income' ? _incomeCategories : _expenseCategories;
+      TransactionCategory.labelsByType(_transactionType.value);
 
   @override
   void initState() {
@@ -226,10 +209,10 @@ class _TransactionFormScreenState extends State<TransactionFormScreen> {
                         label: 'Receita',
                         icon: Icons.arrow_upward,
                         color: Colors.green,
-                        isSelected: _transactionType == 'income',
+                        isSelected: _transactionType == TransactionType.income,
                         onTap: () {
                           setState(() {
-                            _transactionType = 'income';
+                            _transactionType = TransactionType.income;
                             _selectedCategory = 'Outros';
                           });
                         },
@@ -243,10 +226,10 @@ class _TransactionFormScreenState extends State<TransactionFormScreen> {
                         label: 'Despesa',
                         icon: Icons.arrow_downward,
                         color: Colors.red,
-                        isSelected: _transactionType == 'expense',
+                        isSelected: _transactionType == TransactionType.expense,
                         onTap: () {
                           setState(() {
-                            _transactionType = 'expense';
+                            _transactionType = TransactionType.expense;
                             _selectedCategory = 'Outros';
                           });
                         },

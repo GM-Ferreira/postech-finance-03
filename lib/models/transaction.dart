@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'transaction_type.dart';
+
 class Transaction {
   final String? id;
   final String userId;
   final String description;
   final double amount;
-  final String type;
+  final TransactionType type;
   final String category;
   final DateTime date;
   final String? receiptUrl;
@@ -31,7 +33,7 @@ class Transaction {
       userId: data['userId'] ?? '',
       description: data['description'] ?? '',
       amount: (data['amount'] ?? 0).toDouble(),
-      type: data['type'] ?? 'expense',
+      type: TransactionType.fromValue(data['type'] ?? 'expense'),
       category: data['category'] ?? 'Outros',
       date: (data['date'] as Timestamp).toDate(),
       receiptUrl: data['receiptUrl'],
@@ -44,7 +46,7 @@ class Transaction {
       'userId': userId,
       'description': description,
       'amount': amount,
-      'type': type,
+      'type': type.value,
       'category': category,
       'date': Timestamp.fromDate(date),
       'receiptUrl': receiptUrl,
@@ -57,7 +59,7 @@ class Transaction {
     String? userId,
     String? description,
     double? amount,
-    String? type,
+    TransactionType? type,
     String? category,
     DateTime? date,
     String? receiptUrl,
@@ -76,14 +78,14 @@ class Transaction {
     );
   }
 
-  bool get isIncome => type == 'income';
+  bool get isIncome => type.isIncome;
 
-  bool get isExpense => type == 'expense';
+  bool get isExpense => type.isExpense;
 
   double get signedAmount => isIncome ? amount : -amount;
 
   @override
   String toString() {
-    return 'Transaction(id: $id, description: $description, amount: $amount, type: $type)';
+    return 'Transaction(id: $id, description: $description, amount: $amount, type: ${type.value})';
   }
 }
