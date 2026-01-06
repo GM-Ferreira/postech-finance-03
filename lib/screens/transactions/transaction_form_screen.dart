@@ -290,6 +290,9 @@ class _TransactionFormScreenState extends State<TransactionFormScreen> {
   Future<void> _pickImage(ImageSource source) async {
     try {
       final image = await _storageService.pickImage(source: source);
+
+      if (!mounted) return;
+
       if (image != null) {
         setState(() {
           _selectedImage = image;

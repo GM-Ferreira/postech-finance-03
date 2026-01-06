@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 
 class StorageService {
@@ -55,7 +56,9 @@ class StorageService {
       final Reference ref = _storage.refFromURL(url);
       await ref.delete();
     } catch (e) {
-      print('Erro ao deletar comprovante: $e');
+      if (kDebugMode) {
+        print('Erro ao deletar comprovante: $e');
+      }
     }
   }
 }
