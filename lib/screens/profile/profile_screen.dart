@@ -89,6 +89,40 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
 
+            const SizedBox(height: 24),
+
+            Card(
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                children: [
+                  ListTile(
+                    leading: const Icon(
+                      Icons.edit,
+                      color: AppTheme.primaryGreen,
+                    ),
+                    title: const Text('Editar nome'),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () => _handleEditName(context),
+                  ),
+
+                  const Divider(height: 1),
+
+                  ListTile(
+                    leading: const Icon(
+                      Icons.lock,
+                      color: AppTheme.primaryGreen,
+                    ),
+                    title: const Text('Alterar senha'),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () => _handleChangePassword(context),
+                  ),
+                ],
+              ),
+            ),
+
             const SizedBox(height: 32),
 
             SizedBox(
@@ -146,5 +180,70 @@ class ProfileScreen extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  Future<void> _handleEditName(BuildContext context) async {
+    final authProvider = context.read<AuthProvider>();
+    final currentName = authProvider.user?.displayName ?? '';
+
+    final newName = await AppDialogs.editName(
+      context,
+      currentName: currentName,
+    );
+
+    if (newName != null && newName != currentName) {
+      if (!context.mounted) return;
+
+      final success = await AppDialogs.showLoading(
+        context,
+        message: 'Atualizando nome...',
+        operation: () => authProvider.updateName(newName),
+      );
+
+      if (!context.mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            success
+                ? 'Nome atualizado com sucesso!'
+                : authProvider.errorMessage ?? 'Erro ao atualizar nome',
+          ),
+          backgroundColor: success ? AppTheme.primaryGreen : Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<void> _handleChangePassword(BuildContext context) async {
+    final authProvider = context.read<AuthProvider>();
+
+    final result = await AppDialogs.changePassword(context);
+
+    if (result != null) {
+      if (!context.mounted) return;
+
+      final success = await AppDialogs.showLoading(
+        context,
+        message: 'Alterando senha...',
+        operation: () => authProvider.updatePassword(
+          currentPassword: result['currentPassword']!,
+          newPassword: result['newPassword']!,
+        ),
+      );
+
+      if (!context.mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            success
+                ? 'Senha alterada com sucesso!'
+                : authProvider.errorMessage ?? 'Erro ao alterar senha',
+          ),
+          backgroundColor: success ? AppTheme.primaryGreen : Colors.red,
+        ),
+      );
+    }
   }
 }

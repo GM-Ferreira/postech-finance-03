@@ -42,7 +42,6 @@ class _LoginScreenState extends State<LoginScreen> {
       if (!mounted) return;
 
       if (success) {
-        // TODO: Navegar para a tela principal (Dashboard)
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Login realizado com sucesso!'),

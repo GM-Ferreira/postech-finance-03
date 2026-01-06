@@ -84,6 +84,61 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<bool> updateName(String name) async {
+    try {
+      _isLoading = true;
+      _errorMessage = null;
+      notifyListeners();
+
+      await _user?.updateDisplayName(name.trim());
+      await _user?.reload();
+      _user = _auth.currentUser;
+
+      _isLoading = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _isLoading = false;
+      _errorMessage = 'Erro ao atualizar nome.';
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> updatePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    try {
+      _isLoading = true;
+      _errorMessage = null;
+      notifyListeners();
+
+      final credential = EmailAuthProvider.credential(
+        email: _user!.email!,
+        password: currentPassword,
+      );
+
+      await _user!.reauthenticateWithCredential(credential);
+
+      await _user!.updatePassword(newPassword);
+
+      _isLoading = false;
+      notifyListeners();
+      return true;
+    } on FirebaseAuthException catch (e) {
+      _isLoading = false;
+      _errorMessage = _getErrorMessage(e.code);
+      notifyListeners();
+      return false;
+    } catch (e) {
+      _isLoading = false;
+      _errorMessage = 'Erro ao alterar senha.';
+      notifyListeners();
+      return false;
+    }
+  }
+
   String _getErrorMessage(String code) {
     switch (code) {
       case 'user-not-found':
