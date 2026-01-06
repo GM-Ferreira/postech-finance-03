@@ -30,4 +30,16 @@ class Formatters {
   static String dateExtended(DateTime date) {
     return _dateExtended.format(date);
   }
+
+  static String initials(String text) {
+    if (text.isEmpty) return 'U';
+
+    final parts = text.trim().split(' ');
+
+    if (parts.length >= 2) {
+      return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
+    }
+
+    return text.substring(0, 1).toUpperCase();
+  }
 }

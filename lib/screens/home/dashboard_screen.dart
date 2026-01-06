@@ -6,9 +6,12 @@ import '../../extensions/transaction_extensions.dart';
 import '../../models/transaction.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/transaction_provider.dart';
+import '../../utils/dialogs.dart';
+import '../../utils/formatters.dart';
 import '../../widgets/dashboard/balance_card.dart';
 import '../../widgets/dashboard/category_pie_chart.dart';
 import '../../widgets/dashboard/monthly_bar_chart.dart';
+import '../profile/profile_screen.dart';
 import '../transactions/transactions_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -40,7 +43,7 @@ class DashboardScreen extends StatelessWidget {
               currentAccountPicture: CircleAvatar(
                 backgroundColor: Colors.white,
                 child: Text(
-                  _getInitials(user?.displayName ?? user?.email ?? 'U'),
+                  Formatters.initials(user?.displayName ?? user?.email ?? 'U'),
                   style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -82,7 +85,10 @@ class DashboardScreen extends StatelessWidget {
               title: const Text('Perfil'),
               onTap: () {
                 Navigator.pop(context);
-                // TODO: Navegar para tela de perfil no futuro
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ProfileScreen()),
+                );
               },
             ),
 
@@ -93,8 +99,14 @@ class DashboardScreen extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.exit_to_app, color: Colors.red),
               title: const Text('Sair', style: TextStyle(color: Colors.red)),
-              onTap: () {
-                _handleLogout(context);
+              onTap: () async {
+                Navigator.pop(context);
+
+                if (await AppDialogs.confirmLogout(context)) {
+                  if (!context.mounted) return;
+
+                  context.read<AuthProvider>().logout();
+                }
               },
             ),
 
@@ -195,38 +207,6 @@ class DashboardScreen extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-
-  String _getInitials(String text) {
-    final parts = text.split(' ');
-    if (parts.length >= 2) {
-      return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
-    }
-    return text.substring(0, 1).toUpperCase();
-  }
-
-  void _handleLogout(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Sair'),
-        content: const Text('Deseja realmente sair da sua conta?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancelar'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              context.read<AuthProvider>().logout();
-            },
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Sair'),
-          ),
-        ],
-      ),
     );
   }
 }
